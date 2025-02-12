@@ -10,20 +10,19 @@ RSpec.describe Cart, type: :model do
   end
 
   describe 'mark_as_abandoned' do
-    let(:shopping_cart) { create(:shopping_cart) }
+    let(:active_cart) { create(:cart, :active) }
 
-    it 'marks the shopping cart as abandoned if inactive for a certain time' do
-      shopping_cart.update(last_interaction_at: 3.hours.ago)
-      expect { shopping_cart.mark_as_abandoned }.to change { shopping_cart.abandoned? }.from(false).to(true)
+    it 'marks the shopping cart as abandoned if inactive for 3 hours or more' do
+      expect { active_cart.mark_as_abandoned! }.to change { active_cart.abandoned? }.from(false).to(true)
     end
   end
 
   describe 'remove_if_abandoned' do
-    let(:shopping_cart) { create(:shopping_cart, last_interaction_at: 7.days.ago) }
+    let(:old_abandoned) { create(:cart, :abandoned) }
 
-    it 'removes the shopping cart if abandoned for a certain time' do
-      shopping_cart.mark_as_abandoned
-      expect { shopping_cart.remove_if_abandoned }.to change { Cart.count }.by(-1)
+    it 'removes the shopping cart if abandoned for 7 days or more' do
+      old_abandoned.update(last_interaction_at: 8.days.ago)
+      expect { old_abandoned.remove_if_abandoned! }.to change { Cart.count }.by(-1)
     end
   end
 end
