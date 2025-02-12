@@ -6,6 +6,7 @@ services:
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
+      POSTGRES_DB: store_development
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
@@ -17,10 +18,12 @@ services:
       - "6379:6379"
 
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
     volumes:
-      - .:/app
+      - .:/rails
       - bundle_cache:/usr/local/bundle
     ports:
       - "3000:3000"
@@ -28,19 +31,25 @@ services:
       - db
       - redis
     environment:
+      RAILS_ENV: development
       DATABASE_URL: postgresql://postgres:postgres@db:5432/store_development
       REDIS_URL: redis://redis:6379/1
 
   sidekiq:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     command: bundle exec sidekiq
     volumes:
-      - .:/app
+      - .:/rails
       - bundle_cache:/usr/local/bundle
     depends_on:
       - web
+      - db
       - redis
     environment:
+      RAILS_ENV: development
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/store_development
       REDIS_URL: redis://redis:6379/1
 
 volumes:
