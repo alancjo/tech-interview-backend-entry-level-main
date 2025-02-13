@@ -24,6 +24,4 @@ group :development, :test do
   gem 'shoulda-matchers', '~> 4.0'
   gem 'pry'
   gem 'pry-byebug'
-  gem 'vcr'
-  gem 'webmock'
 end

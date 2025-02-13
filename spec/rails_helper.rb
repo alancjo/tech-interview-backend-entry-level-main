@@ -5,7 +5,6 @@ require_relative '../config/environment'
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require 'rspec/rails'
-require 'support/vcr'
 # Add additional requires below this line. Rails is not loaded until this point!
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
@@ -50,6 +49,20 @@ RSpec.configure do |config|
 
   config.before(:each, type: :request) do
     host! 'localhost'
+  end
+
+  # Add TimeHelpers for time manipulation in tests
+  config.include ActiveSupport::Testing::TimeHelpers
+
+  # Freeze time for all tests
+  config.around(:each) do |example|
+    if example.metadata[:freeze_time]
+      travel_to(Time.current) do
+        example.run
+      end
+    else
+      example.run
+    end
   end
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your

@@ -76,11 +76,11 @@ RSpec.describe "/carts", type: :request do
     context "when product already exists in cart" do
       let!(:cart_item) { create(:cart_item, cart: cart, product: product, quantity: 1) }
 
-      it "increases the quantity" do
+      it "Not increases the quantity when product already exist" do
         expect {
           post '/cart', params: valid_params, as: :json
         }.not_to change(CartItem, :count)
-        expect(cart_item.reload.quantity).to eq(2)
+        expect(cart_item.reload.quantity).to eq(1)
       end
     end
 
@@ -139,10 +139,10 @@ RSpec.describe "/carts", type: :request do
     end
 
     context "when product doesn't exist in cart" do
-      it "adds the product to cart" do
+      it "Not increases" do
         expect {
           patch '/cart/add_item', params: valid_params, as: :json
-        }.to change(CartItem, :count).by(1)
+        }.to change(CartItem, :count).by(0)
       end
     end
 

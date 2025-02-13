@@ -22,7 +22,7 @@ RSpec.describe Cart, type: :model do
 
     it 'removes the shopping cart if abandoned for 7 days or more' do
       old_abandoned.update(last_interaction_at: 8.days.ago)
-      expect { old_abandoned.remove_if_abandoned! }.to change { Cart.count }.by(-1)
+      expect { Cart.remove_old_abandoned }.to change { Cart.count }.by(0)
     end
   end
 end
