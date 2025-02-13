@@ -6,7 +6,7 @@ class CartsController < ApplicationController
   end
 
   def add_item
-    service = AddCartItemService.new(@cart, cart_item_params)
+    service = AddCartItemService.new(@cart, cart_item_params.to_h)
 
     if service.call
       render json: CartSerializer.new(@cart.reload).serialize
@@ -32,9 +32,6 @@ class CartsController < ApplicationController
   end
 
   def cart_item_params
-    ActionController::Parameters.new({
-      product_id: params[:product_id],
-      quantity: params[:quantity]
-    }).permit(:product_id, :quantity)
+    params.reverse_merge(quantity: 1).permit(:product_id, :quantity)
   end
 end
