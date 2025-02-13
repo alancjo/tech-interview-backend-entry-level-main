@@ -36,7 +36,7 @@ O projeto utiliza 4 containers principais:
 - web: Aplicação Rails (porta 3000)
 - db: PostgreSQL 16 (porta 5432)
 - redis: Redis 7.0.15 (porta 6379)
-s- idekiq: Processamento de jobs em background
+- sidekiq: Processamento de jobs em background
 ### Rotas Disponíveis
 - POST /cart – Adiciona produto ao carrinho
 - GET /cart – Lista itens do carrinho
